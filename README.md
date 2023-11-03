@@ -18,8 +18,8 @@ The plugin bring (of course) a default configuration, but you are free to update
 
 ### Commands
 
-`/featurebox reload` Permits you to reload the configuration if you changed the file when the server is running.
-`/riptidetoggle` Permits you to enable/disable the riptide feature.
-`/riptideforce <number>` Permits you to control the force of the custom riptide (be careful, it can be... really fast.)
-`/unusedtoggle <entity name>` Permits you to enable or disable the natural spawn of three entities: `rabbit`, `zombiehorse`, `illusioner`.
-`/unusedchance <entity name> <percentage>` Permits you to control the % of chance for the natural apparition of those entities.
+* `/featurebox reload` Permits you to reload the configuration if you changed the file when the server is running.
+* `/riptidetoggle` Permits you to enable/disable the riptide feature.
+* `/riptideforce <number>` Permits you to control the force of the custom riptide (be careful, it can be... really fast.)
+* `/unusedtoggle <entity name>` Permits you to enable or disable the natural spawn of three entities: `rabbit`, `zombiehorse`, `illusioner`.
+* `/unusedchance <entity name> <percentage>` Permits you to control the % of chance for the natural apparition of those entities.
