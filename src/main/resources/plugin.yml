@@ -1,0 +1,27 @@
+main: arthessia.featurebox.Plugin
+name: featurebox
+authors: [Arthessia]
+version: 1.0.0.0
+api-version: '1.20'
+
+commands:
+    featurebox:
+        description: "Reload featurebox plugin"
+        usage: "/featurebox <reload>"
+        permission: arthessia.featurebox.reload
+    riptidetoggle:
+        description: "Toggle to enable or disable riptide feature"
+        usage: "/riptidetoggle"
+        permission: arthessia.featurebox.riptidetoggle
+    riptideforce:
+        description: "Command to set a new force for riptide"
+        usage: "/riptideforce <number>"
+        permission: arthessia.featurebox.riptideforce
+    unusedtoggle:
+        description: "Toggle to enable or disable an unused entity"
+        usage: "/unusedtoggle <rabbit | illusioner | zombiehorse>"
+        permission: arthessia.featurebox.unusedtoggle
+    unusedchance:
+        description: "Command to set the spawn chance of an unused entity"
+        usage: "/unusedchance <rabbit | illusioner | zombiehorse> <percent>"
+        permission: arthessia.featurebox.unusedchance

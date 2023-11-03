@@ -1,0 +1,11 @@
+custom.riptide.enabled: true
+custom.riptide.speed: 0
+
+unused.rabbit.spawn.enabled: true
+unused.rabbit.spawn.chance: 10
+
+unused.zombiehorse.spawn.enabled: true
+unused.zombiehorse.spawn.chance: 15
+
+unused.illusioner.spawn.enabled: true
+unused.illusioner.spawn.chance: 5

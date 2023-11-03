@@ -1,0 +1,9 @@
+/.idea
+*.class
+/target
+*.iml
+.project
+.classpath
+.settings/
+*.prefs
+*.bat
