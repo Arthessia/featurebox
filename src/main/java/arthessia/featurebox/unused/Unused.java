@@ -14,6 +14,7 @@ import org.bukkit.entity.Rabbit.Type;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 
 import arthessia.featurebox.Plugin;
@@ -24,6 +25,17 @@ public class Unused implements Listener {
 
     public Unused(Plugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onEntityInteract(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked() instanceof ZombieHorse) {
+            ZombieHorse zombieHorse = (ZombieHorse) event.getRightClicked();
+            // Vérifiez les conditions pour l'apprivoisement (par exemple, l'item que le joueur utilise)
+            // Si les conditions sont remplies, apprivoisez le cheval
+            zombieHorse.setTamed(true);
+            zombieHorse.setOwner(event.getPlayer());
+        }
     }
 
     @EventHandler
@@ -57,6 +69,7 @@ public class Unused implements Listener {
                     // Obtenir et régler l'attribut de santé maximale
                     double maxHealth = horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
                     zombieHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
+                    zombieHorse.setAge(horse.getAge());
 
                     // Optionnel : Copier d'autres attributs selon les besoins
                     zombieHorse.setJumpStrength(((Horse) horse).getJumpStrength());

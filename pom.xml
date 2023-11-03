@@ -7,7 +7,7 @@
 
   <groupId>arthessia</groupId>
   <artifactId>featurebox</artifactId>
-  <version>1.0.0.0</version>
+  <version>1.0.0.1</version>
 
   <packaging>jar</packaging>
   <properties>
@@ -45,7 +45,7 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <configuration>
           <tasks>
-            <copy file="target/featurebox-1.0.0.0.jar" todir="target/plugins" />
+            <copy file="target/featurebox-1.0.0.1.jar" todir="target/plugins" />
           </tasks>
         </configuration>
         <executions>
