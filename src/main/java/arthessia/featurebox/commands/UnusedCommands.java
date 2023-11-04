@@ -107,4 +107,48 @@ public class UnusedCommands {
             }
         }
     }
+
+    public static class UnusedLimit implements CommandExecutor {
+
+        private final Plugin plugin;
+
+        public UnusedLimit(Plugin plugin) {
+            this.plugin = plugin;
+        }
+
+        @Override
+        public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
+            if (sender.hasPermission("arthessia.featurebox.unusedlimit") &&
+                    args.length > 1) {
+                switch (args[0]) {
+
+                    case "zombiehorse":
+                        limitEntity(sender, args);
+                        break;
+
+                    default:
+                        sender.sendMessage("Entity not found.");
+                        return false;
+                }
+            } else {
+                sender.sendMessage(
+                        "You need to specify an Entity name. (zombiehorse), a limit (number) and have the correct permission.");
+                return false;
+            }
+            return true;
+        }
+
+        private void limitEntity(CommandSender sender, String[] args) {
+            try {
+                plugin.getConfig().set(
+                        "unused." + args[0] + ".spawn.limit",
+                        Integer.parseInt(args[1]));
+                sender.sendMessage(args[0] + " has now " + args[1] + " as limit of entity generated per chunk.");
+                plugin.saveConfig();
+            } catch (NumberFormatException e) {
+                sender.sendMessage(
+                        "Syntax error : You need 1) an entity name 2) an integer (number of entity limit per chunk)");
+            }
+        }
+    }
 }

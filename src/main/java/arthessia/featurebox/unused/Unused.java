@@ -54,13 +54,19 @@ public class Unused implements Listener {
 
         // horses
         if (plugin.getConfig().getBoolean("unused.zombiehorse.spawn.enabled")) {
+            List<ZombieHorse> zombiehorses = Arrays.asList(event.getChunk().getEntities()).stream()
+                    .filter(entity -> entity instanceof ZombieHorse)
+                    .map(entity -> (ZombieHorse) entity)
+                    .collect(Collectors.toList());
             List<Horse> horses = Arrays.asList(event.getChunk().getEntities()).stream()
                     .filter(entity -> entity instanceof Horse)
                     .map(entity -> (Horse) entity)
                     .filter(horse -> horse.getInventory().getSaddle() == null || !horse.isTamed())
                     .collect(Collectors.toList());
             for (Horse horse : horses) {
-                if (Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.zombiehorse.spawn.chance")) {
+                if ((plugin.getConfig().getInt("unused.zombiehorse.spawn.limit") == -1
+                        || zombiehorses.size() < plugin.getConfig().getInt("unused.zombiehorse.spawn.limit"))
+                        && Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.zombiehorse.spawn.chance")) {
                     // Convertir le cheval en cheval zombie
                     ZombieHorse zombieHorse = (ZombieHorse) horse.getWorld().spawnEntity(horse.getLocation(),
                             org.bukkit.entity.EntityType.ZOMBIE_HORSE);

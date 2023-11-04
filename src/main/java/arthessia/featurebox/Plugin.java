@@ -16,6 +16,7 @@ import arthessia.featurebox.commands.CommonCommands.ReloadCommand;
 import arthessia.featurebox.commands.RiptideCommands.RiptideEnabled;
 import arthessia.featurebox.commands.RiptideCommands.RiptideForce;
 import arthessia.featurebox.commands.UnusedCommands.UnusedChance;
+import arthessia.featurebox.commands.UnusedCommands.UnusedLimit;
 import arthessia.featurebox.commands.UnusedCommands.UnusedSpawn;
 import arthessia.featurebox.objects.Data;
 import arthessia.featurebox.riptide.Riptide;
@@ -32,9 +33,16 @@ public class Plugin extends JavaPlugin implements Listener {
         this.saveDefaultConfig();
         getLogger().info("Config loaded... ");
 
+        if(!this.getConfig().contains("unused.zombiehorse.spawn.limit")) {
+            this.getConfig().set("unused.zombiehorse.spawn.limit", 3);
+            this.saveConfig();
+            getLogger().info("Setup of new default values...");
+        }
+
         this.getCommand("featurebox").setExecutor(new ReloadCommand(this));
         this.getCommand("unusedtoggle").setExecutor(new UnusedSpawn(this));
         this.getCommand("unusedchance").setExecutor(new UnusedChance(this));
+        this.getCommand("unusedlimit").setExecutor(new UnusedLimit(this));
         this.getCommand("riptidetoggle").setExecutor(new RiptideEnabled(this));
         this.getCommand("riptideforce").setExecutor(new RiptideForce(this));
         getLogger().info("Commands loaded...");
