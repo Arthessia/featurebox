@@ -31,8 +31,6 @@ public class Unused implements Listener {
     public void onEntityInteract(PlayerInteractEntityEvent event) {
         if (event.getRightClicked() instanceof ZombieHorse) {
             ZombieHorse zombieHorse = (ZombieHorse) event.getRightClicked();
-            // Vérifiez les conditions pour l'apprivoisement (par exemple, l'item que le joueur utilise)
-            // Si les conditions sont remplies, apprivoisez le cheval
             zombieHorse.setTamed(true);
             zombieHorse.setOwner(event.getPlayer());
         }
@@ -59,6 +57,7 @@ public class Unused implements Listener {
             List<Horse> horses = Arrays.asList(event.getChunk().getEntities()).stream()
                     .filter(entity -> entity instanceof Horse)
                     .map(entity -> (Horse) entity)
+                    .filter(horse -> horse.getInventory().getSaddle() == null || !horse.isTamed())
                     .collect(Collectors.toList());
             for (Horse horse : horses) {
                 if (Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.zombiehorse.spawn.chance")) {
@@ -83,8 +82,6 @@ public class Unused implements Listener {
         if (plugin.getConfig().getBoolean("unused.illusioner.spawn.enabled")) {
             if (event.getEntityType() == EntityType.PILLAGER) {
                 if (Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.illusioner.spawn.chance")) {
-                    // Supprimer le pillager
-                    event.getEntity().remove();
 
                     // Faire apparaître un illusioner à la même position
                     Illusioner illusioner = (Illusioner) event.getEntity().getWorld().spawnEntity(
@@ -95,41 +92,4 @@ public class Unused implements Listener {
             }
         }
     }
-
-    // @EventHandler
-    // public void killEntity(EntityDeathEvent event) {
-    // if (Plugin.CONFIG.getBoolean("unused.giant.spawn.enabled")) {
-    // if (event.getEntityType() == EntityType.ZOMBIE
-    // || event.getEntityType() == EntityType.ZOMBIE_VILLAGER
-    // || event.getEntityType() == EntityType.ZOMBIE_HORSE) {
-
-    // Player player = (Player) event.getEntity().getKiller();
-    // if
-    // (Plugin.DATA.getPlayerCounts().containsKey(player.getUniqueId().toString()))
-    // {
-    // if (Plugin.DATA.getPlayerCounts().get(player.getUniqueId().toString())
-    // .getCountZombies() >= Plugin.CONFIG.getInt("unused.giant.spawn.threshold")) {
-    // Zombie giant = (Zombie) player.getWorld().spawnEntity(player.getLocation(),
-    // EntityType.GIANT);
-    // giant.setAI(true);
-
-    // PlayerCount pc =
-    // Plugin.DATA.getPlayerCounts().get(player.getUniqueId().toString());
-    // pc.setCountZombies(0);
-    // Plugin.DATA.getPlayerCounts().put(player.getUniqueId().toString(), pc);
-    // } else {
-    // PlayerCount pc =
-    // Plugin.DATA.getPlayerCounts().get(player.getUniqueId().toString());
-    // pc.setCountZombies(pc.getCountZombies() + 1);
-    // Plugin.DATA.getPlayerCounts().put(player.getUniqueId().toString(), pc);
-    // }
-    // } else {
-    // Map<String, PlayerCount> playerCounts = Plugin.DATA.getPlayerCounts();
-    // playerCounts.put(player.getUniqueId().toString(),
-    // new PlayerCount(player.getUniqueId().toString(), 1));
-    // }
-    // Plugin.save();
-    // }
-    // }
-    // }
 }
