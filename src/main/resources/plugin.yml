@@ -1,7 +1,7 @@
 main: arthessia.featurebox.Plugin
 name: featurebox
 authors: [Arthessia]
-version: 1.0.0.3
+version: 1.0.0.4
 api-version: '1.20'
 
 commands:
@@ -29,3 +29,7 @@ commands:
         description: "Command to set the spawn limit of an unused entity (-1 for no limit)"
         usage: "/unusedlimit <zombiehorse> <limit (-1 for no limit)>"
         permission: arthessia.featurebox.unusedlimit
+    ondeathtoggle:
+        description: "Toggle to enable or disable the location sent to player on death"
+        usage: "/ondeathtoggle"
+        permission: arthessia.featurebox.ondeathtoggle

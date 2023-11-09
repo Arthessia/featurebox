@@ -7,13 +7,14 @@
 
   <groupId>arthessia</groupId>
   <artifactId>featurebox</artifactId>
-  <version>1.0.0.3</version>
+  <version>${featurebox.version}</version>
 
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <featurebox.version>1.0.0.4</featurebox.version>
     <!-- <remapped.version>1.20.2-R0.1-SNAPSHOT</remapped.version> -->
   </properties>
   <repositories>
@@ -52,7 +53,7 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <configuration>
           <tasks>
-            <copy file="target/featurebox-1.0.0.3.jar" todir="target/plugins" />
+            <copy file="target/featurebox-${featurebox.version}.jar" todir="target/plugins" />
           </tasks>
         </configuration>
         <executions>

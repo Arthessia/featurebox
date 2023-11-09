@@ -19,6 +19,8 @@ import arthessia.featurebox.commands.UnusedCommands.UnusedChance;
 import arthessia.featurebox.commands.UnusedCommands.UnusedLimit;
 import arthessia.featurebox.commands.UnusedCommands.UnusedSpawn;
 import arthessia.featurebox.objects.Data;
+import arthessia.featurebox.ondeath.OnDeath;
+import arthessia.featurebox.ondeath.OnDeathCommands.OnDeathToggle;
 import arthessia.featurebox.riptide.Riptide;
 import arthessia.featurebox.unused.Unused;
 
@@ -38,6 +40,11 @@ public class Plugin extends JavaPlugin implements Listener {
             this.saveConfig();
             getLogger().info("Setup of new default values...");
         }
+        if(!this.getConfig().contains("common.location.death.enabled")) {
+            this.getConfig().set("common.location.death.enabled", true);
+            this.saveConfig();
+            getLogger().info("Setup of new default values...");
+        }
 
         this.getCommand("featurebox").setExecutor(new ReloadCommand(this));
         this.getCommand("unusedtoggle").setExecutor(new UnusedSpawn(this));
@@ -45,10 +52,13 @@ public class Plugin extends JavaPlugin implements Listener {
         this.getCommand("unusedlimit").setExecutor(new UnusedLimit(this));
         this.getCommand("riptidetoggle").setExecutor(new RiptideEnabled(this));
         this.getCommand("riptideforce").setExecutor(new RiptideForce(this));
+        this.getCommand("ondeathtoggle").setExecutor(new OnDeathToggle(this));
         getLogger().info("Commands loaded...");
         
         Riptide riptide = new Riptide(this);
         Unused unused = new Unused(this);
+        OnDeath onDeath = new OnDeath(this);
+        Bukkit.getServer().getPluginManager().registerEvents(onDeath, this);
         Bukkit.getServer().getPluginManager().registerEvents(riptide, this);
         Bukkit.getServer().getPluginManager().registerEvents(unused, this);
         getLogger().info("Features loaded...");
