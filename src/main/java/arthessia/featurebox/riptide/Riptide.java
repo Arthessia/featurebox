@@ -33,8 +33,8 @@ public class Riptide implements Listener {
                 && event.getAction() == Action.RIGHT_CLICK_AIR) {
 
             Damageable meta = (Damageable) event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
-            int unbreaking = (meta.hasEnchant(Enchantment.DURABILITY))
-                    ? meta.getEnchantLevel(Enchantment.DURABILITY)
+            int unbreaking = (meta.hasEnchant(Enchantment.UNBREAKING))
+                    ? meta.getEnchantLevel(Enchantment.UNBREAKING)
                     : 0;
             int riptide = (meta.hasEnchant(Enchantment.RIPTIDE))
                     ? meta.getEnchantLevel(Enchantment.RIPTIDE)
@@ -48,7 +48,7 @@ public class Riptide implements Listener {
                 }
                 event.getPlayer().getInventory().getItemInMainHand().setItemMeta(meta);
             }
-            event.getPlayer().spawnParticle(Particle.CRIT_MAGIC, event.getPlayer().getLocation(),
+            event.getPlayer().spawnParticle(Particle.CRIT, event.getPlayer().getLocation(),
                     100, 1, 1, 1, 0.1);
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_TRIDENT_THROW, 1.0F, 1.0F);
             double speed = plugin.getConfig().getDouble("custom.riptide.speed") + (riptide);
