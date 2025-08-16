@@ -1,5 +1,11 @@
 custom.riptide.enabled: true
-custom.riptide.speed: 0
+custom.riptide.speed: 1
+# custom.mobs.enabled: true
+# custom.mobs.list:
+#   - name: Arthessia
+#     replaceEntity: minecraft/skeleton
+#     stuff: LEATHER_BOOTS,IRON_HELMET,DIAMOND_LEGGINGS,GOLDEN_CHESTPLATE
+#     spawnChance: 6
 
 unused.rabbit.spawn.enabled: true
 unused.rabbit.spawn.chance: 10
@@ -9,3 +15,6 @@ unused.zombiehorse.spawn.chance: 15
 
 unused.illusioner.spawn.enabled: true
 unused.illusioner.spawn.chance: 5
+
+common.location.death.enabled: true
+common.totem.death.inventory.enabled: true

@@ -18,14 +18,12 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 
 import arthessia.featurebox.Plugin;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class Unused implements Listener {
 
     private final Plugin plugin;
-
-    public Unused(Plugin plugin) {
-        this.plugin = plugin;
-    }
 
     @EventHandler
     public void onEntityInteract(PlayerInteractEntityEvent event) {
@@ -72,9 +70,14 @@ public class Unused implements Listener {
                             org.bukkit.entity.EntityType.ZOMBIE_HORSE);
 
                     // Obtenir et régler l'attribut de santé maximale
-                    double maxHealth = horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
-                    zombieHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
+                    double maxHealth = horse.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
+                    zombieHorse.getAttribute(Attribute.MAX_HEALTH).setBaseValue(maxHealth);
                     zombieHorse.setAge(horse.getAge());
+
+                    // Domestication test
+                    zombieHorse.setDomestication(horse.getDomestication());
+                    zombieHorse.setBreed(horse.canBreed());
+                    zombieHorse.setTamed(horse.isTamed());
 
                     // Optionnel : Copier d'autres attributs selon les besoins
                     zombieHorse.setJumpStrength(((Horse) horse).getJumpStrength());

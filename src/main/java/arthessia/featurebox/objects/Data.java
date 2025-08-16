@@ -3,14 +3,13 @@ package arthessia.featurebox.objects;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class Data {
 	private Map<String, PlayerCount> playerCounts = new HashMap<>();
-
-	public Map<String, PlayerCount> getPlayerCounts() {
-		return playerCounts;
-	}
-
-	public void setPlayerCounts(HashMap<String, PlayerCount> playerCounts) {
-		this.playerCounts = playerCounts;
-	}
 }

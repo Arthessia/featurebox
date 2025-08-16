@@ -1,8 +1,8 @@
 main: arthessia.featurebox.Plugin
 name: featurebox
 authors: [Arthessia]
-version: 1.0.0.6
-api-version: '1.21'
+version: 1.0.0.7
+api-version: "1.21"
 
 commands:
     featurebox:
@@ -33,7 +33,15 @@ commands:
         description: "Toggle to enable or disable the location sent to player on death"
         usage: "/ondeathtoggle"
         permission: arthessia.featurebox.ondeathtoggle
-    daytime:
-        description: "Command to modify World full day time."
-        usage: "/daytime <number>"
-        permission: arthessia.featurebox.daytime
+    custommobtoggle:
+        description: "Toggle to enable or disable the custom mob feature"
+        usage: "/custommobtoggle"
+        permission: arthessia.featurebox.custommobtoggle
+    findcustommob:
+        description: "Find a custom entity"
+        usage: "/findcustommob <custom name>"
+        permission: arthessia.featurebox.findcustommob
+    undyingtoggle:
+        description: "Toggle to enable or disable the undying feature."
+        usage: "/undyingtoggle"
+        permission: arthessia.featurebox.undyingtoggle

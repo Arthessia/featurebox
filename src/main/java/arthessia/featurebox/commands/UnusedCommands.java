@@ -5,16 +5,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import arthessia.featurebox.Plugin;
+import lombok.RequiredArgsConstructor;
 
 public class UnusedCommands {
 
+    @RequiredArgsConstructor
     public static class UnusedSpawn implements CommandExecutor {
 
         private final Plugin plugin;
-
-        public UnusedSpawn(Plugin plugin) {
-            this.plugin = plugin;
-        }
 
         @Override
         public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
@@ -57,13 +55,10 @@ public class UnusedCommands {
         }
     }
 
+    @RequiredArgsConstructor
     public static class UnusedChance implements CommandExecutor {
 
         private final Plugin plugin;
-
-        public UnusedChance(Plugin plugin) {
-            this.plugin = plugin;
-        }
 
         @Override
         public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
@@ -108,13 +103,10 @@ public class UnusedCommands {
         }
     }
 
+    @RequiredArgsConstructor
     public static class UnusedLimit implements CommandExecutor {
 
         private final Plugin plugin;
-
-        public UnusedLimit(Plugin plugin) {
-            this.plugin = plugin;
-        }
 
         @Override
         public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {

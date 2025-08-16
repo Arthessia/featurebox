@@ -5,16 +5,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import arthessia.featurebox.Plugin;
+import lombok.RequiredArgsConstructor;
 
 public class RiptideCommands {
 
+    @RequiredArgsConstructor
     public static class RiptideEnabled implements CommandExecutor {
 
         private final Plugin plugin;
-
-        public RiptideEnabled(Plugin plugin) {
-            this.plugin = plugin;
-        }
 
         @Override
         public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
