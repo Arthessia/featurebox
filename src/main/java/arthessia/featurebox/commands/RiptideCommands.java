@@ -17,10 +17,10 @@ public class RiptideCommands {
         @Override
         public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
             if (sender.hasPermission("arthessia.featurebox.riptidetoggle")) {
-                plugin.getConfig().set("custom.riptide.enabled",
-                        (plugin.getConfig().getBoolean("custom.riptide.enabled")) ? false : true);
+                plugin.getConfig().set("riptide.enabled",
+                        (plugin.getConfig().getBoolean("riptide.enabled")) ? false : true);
                 plugin.saveConfig();
-                sender.sendMessage((plugin.getConfig().getBoolean("custom.riptide.enabled"))
+                sender.sendMessage((plugin.getConfig().getBoolean("riptide.enabled"))
                         ? "Riptide is now enabled."
                         : "Riptide is now disabled.");
                 return true;
@@ -44,7 +44,7 @@ public class RiptideCommands {
             if (sender.hasPermission("arthessia.featurebox.riptideforce") &&
                     args.length > 0) {
                 try {
-                    plugin.getConfig().set("custom.riptide.speed", Double.parseDouble(args[0]));
+                    plugin.getConfig().set("riptide.speed", Double.parseDouble(args[0]));
                 } catch (NumberFormatException e) {
                     sender.sendMessage("You must set a number.");
                     return false;

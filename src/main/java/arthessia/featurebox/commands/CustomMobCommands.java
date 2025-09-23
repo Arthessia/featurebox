@@ -23,12 +23,12 @@ public class CustomMobCommands {
         @Override
         public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
             if (sender.hasPermission("arthessia.featurebox.custommobtoggle")) {
-                plugin.getConfig().set("custom.mobs.enabled",
-                        (plugin.getConfig().getBoolean("custom.mobs.enabled")) ? false : true);
+                plugin.getConfig().set("mobs.enabled",
+                        (plugin.getConfig().getBoolean("mobs.enabled")) ? false : true);
                 plugin.saveConfig();
-                sender.sendMessage((plugin.getConfig().getBoolean("custom.mobs.enabled"))
-                        ? "Custom mob feature is now enabled."
-                        : "Custom mob feature is now disabled.");
+                sender.sendMessage((plugin.getConfig().getBoolean("mobs.enabled"))
+                        ? "Mob feature is now enabled."
+                        : "Mob feature is now disabled.");
                 return true;
             } else {
                 sender.sendMessage("You don't have the permission.");

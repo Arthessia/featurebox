@@ -4,9 +4,13 @@ import java.util.ArrayList;
 
 import org.bukkit.EntityEffect;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
@@ -70,6 +74,37 @@ public class OnDeath implements Listener {
                     + " X: " + (int) event.getEntity().getLocation().getX()
                     + " Y: " + (int) event.getEntity().getLocation().getY()
                     + " Z: " + (int) event.getEntity().getLocation().getZ() + ".");
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (!plugin.getConfig().getBoolean("common.name.death.enabled"))
+            return;
+
+        Player victim = event.getEntity();
+
+        EntityDamageEvent damageEvent = victim.getLastDamageCause();
+        if (!(damageEvent instanceof EntityDamageByEntityEvent entityEvent)) {
+            return;
+        }
+
+        Entity damager = entityEvent.getDamager();
+
+        if (damager instanceof Projectile projectile &&
+                projectile.getShooter() instanceof LivingEntity shooter) {
+            damager = shooter;
+        }
+
+        if (damager instanceof LivingEntity living && !(damager instanceof Player)) {
+            String newName = plugin.getConfig().getString("common.name.death.template");
+            if (newName == null || newName.isEmpty()) {
+                return;
+            }
+            newName = newName.replace("{victim}", victim.getName());
+            living.setCustomName(newName);
+            living.setCustomNameVisible(true);
+            plugin.getLogger().info(living.getType() + " renommé en \"" + newName + "\"");
         }
     }
 

@@ -1,20 +1,116 @@
-custom.riptide.enabled: true
-custom.riptide.speed: 1
-# custom.mobs.enabled: true
-# custom.mobs.list:
-#   - name: Arthessia
-#     replaceEntity: minecraft/skeleton
-#     stuff: LEATHER_BOOTS,IRON_HELMET,DIAMOND_LEGGINGS,GOLDEN_CHESTPLATE
-#     spawnChance: 6
+# ============================================================
+#  FeatureBox - Configuration par défaut
+# ============================================================
 
-unused.rabbit.spawn.enabled: true
-unused.rabbit.spawn.chance: 10
+# --- Custom Items & Features ---------------------------------
 
-unused.zombiehorse.spawn.enabled: true
-unused.zombiehorse.spawn.chance: 15
+ender_wand:
+  distance: 100       # Distance max pour la téléportation
+  max_usage: 50       # Nombre d’utilisations avant casse
+  enabled: true
 
-unused.illusioner.spawn.enabled: true
-unused.illusioner.spawn.chance: 5
+riptide:
+  enabled: true       # Active/désactive le boost Riptide
+  speed: 1            # Puissance du boost Riptide
 
-common.location.death.enabled: true
-common.totem.death.inventory.enabled: true
+
+mobs:
+  enabled: true
+  list:
+    - name: Arthessia
+      replaceEntity: minecraft:skeleton
+      stuff:
+        - material: LEATHER_BOOTS
+          enchants:
+            - name: minecraft:protection
+              level: 1
+        - material: BOW
+          enchants:
+            - name: minecraft:flame
+              level: 1
+      spawnChance: 25
+
+    - name: Matthieu
+      replaceEntity: minecraft:skeleton
+      stuff:
+        - material: DIAMOND_LEGGINGS
+        - material: GOLDEN_CHESTPLATE
+        - material: GOLDEN_AXE
+      spawnChance: 25
+
+recipes:
+  fish_soup:
+    icon: MUSHROOM_STEW
+    name: "§7Une soupe délicieuse"
+    lore:
+      - "§7→ Permet de respirer sous l'eau pendant 10 min"
+    shape:
+      - "AAA"
+      - "/V/"
+    ingredients:
+      - shortcut: A
+        key: COD
+      - shortcut: V
+        key: BOWL
+    effects:
+      - key: WATER_BREATHING
+        duration: 600   # 10 minutes en secondes
+        amplifier: 0
+    glow: true
+
+  magic_cookie:
+    icon: COOKIE
+    name: "§dMagic Cookie"
+    lore:
+      - "§7Un biscuit mystérieux…"
+      - "§7→ Donne de la vitesse et régénère la vie"
+    shape:
+      - "SSS"
+      - "SCS"
+      - "SSS"
+    ingredients:
+      - shortcut: S
+        key: SUGAR
+      - shortcut: C
+        key: COOKIE
+    effects:
+      - key: SPEED
+        duration: 300   # 5 min
+        amplifier: 1
+      - key: REGENERATION
+        duration: 60    # 1 min
+        amplifier: 0
+    glow: true
+
+# --- Unused / Expérimental ----------------------------------
+
+unused:
+  rabbit:
+    spawn:
+      enabled: true
+      chance: 10
+  zombiehorse:
+    spawn:
+      enabled: true
+      chance: 15
+      limit: 3
+  illusioner:
+    spawn:
+      enabled: true
+      chance: 5
+
+
+# --- Common Features ----------------------------------------
+
+common:
+  name:
+    death:
+      enabled: true
+      template: "§cAssassin de {victim}"
+  location:
+    death:
+      enabled: true
+  totem:
+    death:
+      inventory:
+        enabled: true

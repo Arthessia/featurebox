@@ -23,7 +23,7 @@ public class Riptide implements Listener {
 
     @EventHandler
     public void onTridentUse(PlayerInteractEvent event) {
-        if (!plugin.getConfig().getBoolean("custom.riptide.enabled"))
+        if (!plugin.getConfig().getBoolean("riptide.enabled"))
             return;
 
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
@@ -57,7 +57,7 @@ public class Riptide implements Listener {
             }
         }
 
-        double baseSpeed = plugin.getConfig().getDouble("custom.riptide.speed");
+        double baseSpeed = plugin.getConfig().getDouble("riptide.speed");
         double speed = baseSpeed * riptide;
 
         event.setCancelled(true);
