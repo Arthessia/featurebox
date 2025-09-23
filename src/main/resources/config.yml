@@ -1,25 +1,28 @@
 # ============================================================
-#  FeatureBox - Configuration par défaut
+#  FeatureBox - Default Configuration
 # ============================================================
 
 # --- Custom Items & Features ---------------------------------
+# Section for custom items and gameplay features.
 
 ender_wand:
-  distance: 100       # Distance max pour la téléportation
-  max_usage: 50       # Nombre d’utilisations avant casse
-  enabled: true
+  distance: 100       # Maximum teleportation distance for Ender Wand (in blocks)
+  max_usage: 50       # Number of uses before the Ender Wand breaks
+  enabled: true       # Enable/disable the Ender Wand feature
 
 riptide:
-  enabled: true       # Active/désactive le boost Riptide
-  speed: 1            # Puissance du boost Riptide
+  enabled: true       # Enable/disable custom Riptide boost (Poseidon trident)
+  speed: 1            # Base speed multiplier for Riptide boost
 
+# --- Custom Mobs ---------------------------------------------
+# Section for custom mobs that replace vanilla entities.
 
 mobs:
-  enabled: true
+  enabled: true       # Enable/disable custom mob spawning
   list:
-    - name: Arthessia
-      replaceEntity: minecraft:skeleton
-      stuff:
+    - name: Arthessia # Custom mob name (displayed in-game)
+      replaceEntity: minecraft:skeleton # Entity type to replace
+      stuff:           # Equipment for the custom mob
         - material: LEATHER_BOOTS
           enchants:
             - name: minecraft:protection
@@ -28,7 +31,7 @@ mobs:
           enchants:
             - name: minecraft:flame
               level: 1
-      spawnChance: 25
+      spawnChance: 25 # Chance (%) for this mob to spawn instead of the vanilla entity
 
     - name: Matthieu
       replaceEntity: minecraft:skeleton
@@ -38,25 +41,28 @@ mobs:
         - material: GOLDEN_AXE
       spawnChance: 25
 
+# --- Custom Recipes ------------------------------------------
+# Section for custom crafting recipes and their effects.
+
 recipes:
   fish_soup:
-    icon: MUSHROOM_STEW
-    name: "§7Une soupe délicieuse"
-    lore:
+    icon: MUSHROOM_STEW         # Item icon for the recipe result
+    name: "§7Une soupe délicieuse" # Display name for the crafted item
+    lore:                       # Lore (description) lines for the item
       - "§7→ Permet de respirer sous l'eau pendant 10 min"
-    shape:
+    shape:                      # Crafting grid shape (3x3, use / for empty slots)
       - "AAA"
       - "/V/"
-    ingredients:
+    ingredients:                # Ingredient mapping for each shortcut letter
       - shortcut: A
         key: COD
       - shortcut: V
         key: BOWL
-    effects:
+    effects:                    # Effects applied when consuming the item
       - key: WATER_BREATHING
-        duration: 600   # 10 minutes en secondes
+        duration: 600           # Duration in seconds
         amplifier: 0
-    glow: true
+    glow: true                  # Whether the item glows (enchanted effect)
 
   magic_cookie:
     icon: COOKIE
@@ -75,42 +81,45 @@ recipes:
         key: COOKIE
     effects:
       - key: SPEED
-        duration: 300   # 5 min
+        duration: 300           # Duration in seconds
         amplifier: 1
       - key: REGENERATION
-        duration: 60    # 1 min
+        duration: 60            # Duration in seconds
         amplifier: 0
     glow: true
 
-# --- Unused / Expérimental ----------------------------------
+# --- Unused / Experimental Entities --------------------------
+# Section for enabling/disabling and configuring unused mobs.
 
 unused:
   rabbit:
     spawn:
-      enabled: true
-      chance: 10
+      enabled: true             # Enable/disable killer rabbit spawn
+      chance: 10                # Chance (%) for killer rabbit to spawn
+
   zombiehorse:
     spawn:
-      enabled: true
-      chance: 15
-      limit: 3
+      enabled: true             # Enable/disable zombie horse spawn
+      chance: 15                # Chance (%) for zombie horse to spawn
+      limit: 3                  # Maximum number of zombie horses per chunk (-1 for unlimited)
+
   illusioner:
     spawn:
-      enabled: true
-      chance: 5
+      enabled: true             # Enable/disable illusioner spawn
+      chance: 5                 # Chance (%) for illusioner to spawn
 
-
-# --- Common Features ----------------------------------------
+# --- Common Features -----------------------------------------
+# Section for miscellaneous features (death messages, location, totem behavior).
 
 common:
   name:
     death:
-      enabled: true
-      template: "§cAssassin de {victim}"
+      enabled: true             # Enable/disable custom death message for mobs
+      template: "§cAssassin de {victim}" # Template for mob name after killing a player
   location:
     death:
-      enabled: true
+      enabled: true             # Enable/disable sending location to player on death
   totem:
     death:
       inventory:
-        enabled: true
+        enabled: true           # Enable/disable totem saving effect from inventory/bundle
