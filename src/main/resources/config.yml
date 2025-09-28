@@ -143,6 +143,7 @@ teleport:
   lightning: false      # Global setting: should lightning effects be used on teleport (can be overridden per stone)
 
   sound:
+    discovery: true                     # Only allow players to see stones they have already discovered
     teleport: block.end_portal.spawn    # Default sound played when teleporting
     ambient: ambient.basalt_deltas.mood # Default ambient sound around teleport stones
     volume: 1.0                         # Default sound volume

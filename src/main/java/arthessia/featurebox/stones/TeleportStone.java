@@ -55,8 +55,8 @@ public class TeleportStone implements Listener {
         plugin.getConfig().set("teleport.stones." + stoneKey, null);
         plugin.saveConfig();
 
-        player.sendMessage("§cLe point de téléportation §d"
-                + stoneKey.replace("_", " ") + " §ca été détruit !");
+        player.sendMessage("§cTeleportation point §d"
+                + stoneKey.replace("_", " ") + " §has been removed.");
     }
 
     @EventHandler
@@ -83,7 +83,7 @@ public class TeleportStone implements Listener {
                             && plugin.getConfig().getInt(path + ".z") == z) {
 
                         event.setCancelled(true);
-                        player.sendMessage("§cImpossible de placer un bloc à côté d’un téléporteur !");
+                        player.sendMessage("§cYou cannot place a block next to a teleportation point!");
                         return;
                     }
                 }
@@ -116,7 +116,7 @@ public class TeleportStone implements Listener {
 
         Location newLoc = block.getLocation();
         if (isNearAnotherTeleport(newLoc, plugin.getConfig().getInt("teleport.distance", 200))) {
-            player.sendMessage("§cImpossible de créer un point de téléportation : un autre est trop proche !");
+            player.sendMessage("§cUnable to create a teleportation point: another one is too close!");
             block.getWorld().strikeLightning(block.getLocation());
             block.getWorld().createExplosion(block.getLocation(), 4f, true, true);
             event.setCancelled(true);
@@ -142,8 +142,23 @@ public class TeleportStone implements Listener {
         plugin.getConfig().set("teleport.stones." + stoneKey + ".y", block.getY());
         plugin.getConfig().set("teleport.stones." + stoneKey + ".z", block.getZ());
 
+        block.getWorld().strikeLightningEffect(block.getLocation());
         plugin.saveConfig();
-        player.sendMessage("§aUn nouveau point de téléportation a été créé : " + stoneName);
+        player.sendMessage("§aNew teleport stone created: " + stoneName);
+    }
+
+    private void addDiscovery(Player player, String stoneKey) {
+        String path = "teleport.stones." + stoneKey + ".players";
+        List<String> players = plugin.getConfig().getStringList(path);
+
+        if (!players.contains(player.getUniqueId().toString())) {
+            players.add(player.getUniqueId().toString());
+            plugin.getConfig().set(path, players);
+            plugin.saveConfig();
+
+            player.sendMessage("§aYou have discovered the teleportation stone §d" +
+                    plugin.getConfig().getString("teleport.stones." + stoneKey + ".name") + "§a!");
+        }
     }
 
     private boolean areSurroundedByAir(Block block) {
@@ -193,13 +208,23 @@ public class TeleportStone implements Listener {
         String key = getStoneKeyAt(event.getClickedBlock().getLocation());
         if (key == null)
             return;
-
+        if (plugin.getConfig().getBoolean("teleport.discovery", true)) {
+            addDiscovery(player, key);
+        }
         openMenu(player, 0);
     }
 
     private void openMenu(Player player, int page) {
-        List<String> stones = plugin.getConfig().getConfigurationSection("teleport.stones").getKeys(false).stream()
-                .toList();
+        List<String> stones = plugin.getConfig().getBoolean("teleport.discovery",
+                true) ? plugin.getConfig().getConfigurationSection("teleport.stones").getKeys(false).stream()
+                        .filter(stoneKey -> {
+                            List<String> players = plugin.getConfig()
+                                    .getStringList("teleport.stones." + stoneKey + ".players");
+                            return players.contains(player.getUniqueId().toString());
+                        })
+                        .toList()
+                        : plugin.getConfig().getConfigurationSection("teleport.stones").getKeys(false).stream()
+                                .toList();
 
         int maxPage = (int) Math.ceil((double) stones.size() / ITEMS_PER_PAGE);
         if (page < 0)
@@ -207,7 +232,7 @@ public class TeleportStone implements Listener {
         if (page >= maxPage)
             page = maxPage - 1;
 
-        Inventory inv = Bukkit.createInventory(null, SIZE, "§5Voyage rapide (Page " + (page + 1) + ")");
+        Inventory inv = Bukkit.createInventory(null, SIZE, "§5Fast Travel (Page " + (page + 1) + ")");
 
         int start = page * ITEMS_PER_PAGE;
         int end = Math.min(start + ITEMS_PER_PAGE, stones.size());
@@ -235,7 +260,7 @@ public class TeleportStone implements Listener {
         if (page > 0) {
             ItemStack prev = new ItemStack(Material.ARROW);
             ItemMeta meta = prev.getItemMeta();
-            meta.setDisplayName("§e◀ Page précédente");
+            meta.setDisplayName("§e◀ Previous Page");
             prev.setItemMeta(meta);
             inv.setItem(45, prev);
         }
@@ -243,7 +268,7 @@ public class TeleportStone implements Listener {
         if (page < maxPage - 1) {
             ItemStack next = new ItemStack(Material.ARROW);
             ItemMeta meta = next.getItemMeta();
-            meta.setDisplayName("§e▶ Page suivante");
+            meta.setDisplayName("§e▶ Next Page");
             next.setItemMeta(meta);
             inv.setItem(53, next);
         }
@@ -256,7 +281,7 @@ public class TeleportStone implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (plugin.getConfig().getBoolean("teleport.enabled", true) == false)
             return;
-        if (!event.getView().getTitle().startsWith("§5Voyage rapide"))
+        if (!event.getView().getTitle().startsWith("§5Fast Travel"))
             return;
         if (!(event.getWhoClicked() instanceof Player player))
             return;
@@ -308,7 +333,7 @@ public class TeleportStone implements Listener {
                 NamespacedKey key = NamespacedKey.minecraft(teleportSound);
                 Sound sound = Registry.SOUNDS.get(key);
                 player.playSound(player.getLocation(), sound, 1f, 1f);
-                player.sendMessage("§dTéléporté vers " + stoneName + " !");
+                player.sendMessage("§dTeleported to " + stoneName + " !");
             }
             break;
         }
