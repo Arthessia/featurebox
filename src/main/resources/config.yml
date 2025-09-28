@@ -33,13 +33,24 @@ mobs:
     #           level: 1
     #   spawnChance: 25 # Chance (%) for this mob to spawn instead of the vanilla entity
 
-    # - name: Matthieu
+    # - name: Dead Matthieu
     #   replaceEntity: minecraft:skeleton
     #   stuff:
-    #     - material: DIAMOND_LEGGINGS
-    #     - material: GOLDEN_CHESTPLATE
-    #     - material: GOLDEN_AXE
-    #   spawnChance: 25
+    #     - material: NETHERITE_BOOTS
+    #       enchants:
+    #         - name: minecraft:protection
+    #           level: 4
+    #         - name: minecraft:mending
+    #           level: 1
+    #     - material: BOW
+    #       enchants:
+    #         - name: minecraft:flame
+    #           level: 1
+    #         - name: minecraft:mending
+    #           level: 1
+    #         - name: minecraft:infinity
+    #           level: 1
+    #   spawnChance: 1
 
 # --- Custom Recipes ------------------------------------------
 # Section for custom crafting recipes and their effects.
