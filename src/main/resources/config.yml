@@ -138,6 +138,7 @@ common:
 # --- Teleport Stones -----------------------------------------
 # Section for configuring teleport stones (lightning rods) and their behavior.
 teleport:
+  item_name: Teleportation Stone # Name of the teleportation item
   enabled: true         # Global toggle: enable/disable the teleport system
   distance: 200         # Minimum distance (in blocks) required between two teleport stones
   lightning: false      # Global setting: should lightning effects be used on teleport (can be overridden per stone)
@@ -151,6 +152,18 @@ teleport:
     delay: 10                           # Delay in seconds between ambient effects
 
   particle: end_rod    # Default particle effect around teleport stones
+
+  # -----------------------------
+  # User profiles (optional)
+  # If profile exists, its values are copied when the player creates a new stone
+  # If not, nothing is copied (stone keeps defaults)
+  # -----------------------------
+  profiles:
+    Arthessia:
+      lightning: false                     # Disable lightning flashes
+      ambient: music_disc.chirp            # Custom ambient sound
+      teleport: block.end_portal.spawn     # Custom teleportation sound
+      particle: flame                      # Custom particle effect
 
   stones:
     # SPAWN:                                # Unique identifier for the stone

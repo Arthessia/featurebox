@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -14,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -43,7 +45,7 @@ public class TeleportStone implements Listener {
         Block block = event.getBlock();
         Player player = event.getPlayer();
 
-        if (block.getType() != Material.LIGHTNING_ROD) {
+        if (block.getType() != Material.LANTERN && block.getType() != Material.SOUL_LANTERN) {
             return;
         }
 
@@ -71,7 +73,7 @@ public class TeleportStone implements Listener {
                 BlockFace.EAST, BlockFace.WEST }) {
             Block relative = placed.getRelative(face);
 
-            if (relative.getType() == Material.LIGHTNING_ROD) {
+            if (relative.getType() == Material.LANTERN || relative.getType() == Material.SOUL_LANTERN) {
                 Location loc = relative.getLocation();
                 String worldName = loc.getWorld().getName();
                 int x = loc.getBlockX();
@@ -100,20 +102,23 @@ public class TeleportStone implements Listener {
         Block block = event.getBlockPlaced();
         Player player = event.getPlayer();
 
-        if (block.getType() != Material.LIGHTNING_ROD) {
+        if (block.getType() != Material.LANTERN && block.getType() != Material.SOUL_LANTERN) {
             return;
         }
 
-        Block below1 = block.getRelative(0, -1, 0);
-        Block below2 = block.getRelative(0, -2, 0);
+        Block upper = block.getRelative(0, 1, 0);
+        Block below = block.getRelative(0, -3, 0);
 
-        if (below1.getType() == Material.AIR || below2.getType() == Material.AIR) {
+        if (upper.getType() == Material.AIR || below.getType() == Material.AIR) {
             return;
         }
-        if (below1.getType() != below2.getType()) {
+
+        if (!areSurroundedByAirOrFence(upper) || !areSurroundedByAirOrFence(block)) {
             return;
         }
-        if (!areSurroundedByAir(below1) || !areSurroundedByAir(below2)) {
+
+        String displayName = ChatColor.stripColor(event.getItemInHand().getItemMeta().getDisplayName());
+        if (!displayName.equalsIgnoreCase(plugin.getConfig().getString("teleport.item_name", "Teleportation Stone"))) {
             return;
         }
 
@@ -138,8 +143,18 @@ public class TeleportStone implements Listener {
         String stoneKey = biomeName.replace(' ', '_') + "_"
                 + System.currentTimeMillis();
 
+        ConfigurationSection profile = getProfile(player);
+        String basePath = "teleport.stones." + stoneKey;
+
+        if (profile != null) {
+            plugin.getConfig().set(basePath + ".sound.ambient", profile.getString("ambient"));
+            plugin.getConfig().set(basePath + ".sound.teleport", profile.getString("teleport"));
+            plugin.getConfig().set(basePath + ".particle", profile.getString("particle"));
+            plugin.getConfig().set(basePath + ".lightning", profile.getBoolean("lightning"));
+        }
+
         plugin.getConfig().set("teleport.stones." + stoneKey + ".name", stoneName);
-        plugin.getConfig().set("teleport.stones." + stoneKey + ".material", below1.getType().name());
+        plugin.getConfig().set("teleport.stones." + stoneKey + ".material", below.getType().name());
         plugin.getConfig().set("teleport.stones." + stoneKey + ".world", block.getWorld().getName());
         plugin.getConfig().set("teleport.stones." + stoneKey + ".x", block.getX());
         plugin.getConfig().set("teleport.stones." + stoneKey + ".y", block.getY());
@@ -148,6 +163,13 @@ public class TeleportStone implements Listener {
         block.getWorld().strikeLightningEffect(block.getLocation());
         plugin.saveConfig();
         player.sendMessage("§aNew teleport stone created: " + stoneName);
+    }
+
+    private ConfigurationSection getProfile(Player player) {
+        ConfigurationSection profiles = plugin.getConfig().getConfigurationSection("teleport.profiles");
+        if (profiles == null)
+            return null;
+        return profiles.getConfigurationSection(player.getName());
     }
 
     private void addDiscovery(Player player, String stoneKey) {
@@ -164,11 +186,15 @@ public class TeleportStone implements Listener {
         }
     }
 
-    private boolean areSurroundedByAir(Block block) {
-        return block.getRelative(1, 0, 0).getType() == Material.AIR
-                && block.getRelative(-1, 0, 0).getType() == Material.AIR
-                && block.getRelative(0, 0, 1).getType() == Material.AIR
-                && block.getRelative(0, 0, -1).getType() == Material.AIR;
+    private boolean areSurroundedByAirOrFence(Block block) {
+        return (block.getRelative(1, 0, 0).getType() == Material.AIR
+                || block.getRelative(1, 0, 0).getType().name().toLowerCase().contains("fence"))
+                && (block.getRelative(-1, 0, 0).getType() == Material.AIR
+                        || block.getRelative(-1, 0, 0).getType().name().toLowerCase().contains("fence"))
+                && (block.getRelative(0, 0, 1).getType() == Material.AIR
+                        || block.getRelative(0, 0, 1).getType().name().toLowerCase().contains("fence"))
+                && (block.getRelative(0, 0, -1).getType() == Material.AIR
+                        || block.getRelative(0, 0, -1).getType().name().toLowerCase().contains("fence"));
     }
 
     private boolean isNearAnotherTeleport(Location newLoc, int radius) {
@@ -330,7 +356,7 @@ public class TeleportStone implements Listener {
                 player.closeInventory();
                 if (lightningStrike)
                     player.getWorld().strikeLightningEffect(player.getLocation());
-                player.teleport(new Location(world, x + 0.5, y + 1, z + 0.5));
+                player.teleport(new Location(world, x + 0.5, y - 1, z + 0.5));
                 if (lightningStrike)
                     player.getWorld().strikeLightningEffect(player.getLocation());
                 NamespacedKey key = NamespacedKey.minecraft(teleportSound);

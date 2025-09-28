@@ -1,7 +1,7 @@
 main: arthessia.featurebox.Plugin
 name: featurebox
 authors: [Arthessia]
-version: 1.0.0.7
+version: 1.0.0.8
 api-version: "1.21"
 
 commands:
@@ -45,3 +45,7 @@ commands:
         description: "Toggle to enable or disable the undying feature."
         usage: "/undyingtoggle"
         permission: arthessia.featurebox.undyingtoggle
+    featureboxprofile:
+        description: Main command for FeatureBox
+        usage: /featureboxprofile <args>
+        aliases: [fb]

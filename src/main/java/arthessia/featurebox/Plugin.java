@@ -3,7 +3,10 @@ package arthessia.featurebox;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -31,6 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.gson.Gson;
 
+import arthessia.featurebox.commands.TeleportProfileCommands;
 import arthessia.featurebox.commands.CommonCommands.ReloadCommand;
 import arthessia.featurebox.commands.CustomMobCommands.CustomMobToggle;
 import arthessia.featurebox.commands.CustomMobCommands.FindCustomMob;
@@ -55,6 +59,7 @@ public class Plugin extends JavaPlugin implements Listener {
     private static File DATAD = new File("plugins/featurebox/data.json");
     private static Data DATA = new Data();
     public static final Random RANDOM = new Random();
+    private static final Map<String, LocalDateTime> MUSIC_COOLDOWN = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -96,6 +101,7 @@ public class Plugin extends JavaPlugin implements Listener {
         if (getConfig().getBoolean("teleport.enabled", true)) {
             TeleportStone stones = new TeleportStone(this);
             Bukkit.getServer().getPluginManager().registerEvents(stones, this);
+            this.getCommand("featureboxprofile").setExecutor(new TeleportProfileCommands(this));
             playTeleportStones();
         }
         getLogger().info("Features loaded...");
@@ -122,7 +128,8 @@ public class Plugin extends JavaPlugin implements Listener {
                 double y = this.getConfig().getDouble("teleport.stones." + stoneKey + ".y");
                 double z = this.getConfig().getDouble("teleport.stones." + stoneKey + ".z");
 
-                if (world.getBlockAt((int) x, (int) y, (int) z).getType() != Material.LIGHTNING_ROD) {
+                if (world.getBlockAt((int) x, (int) y, (int) z).getType() != Material.LANTERN && world
+                        .getBlockAt((int) x, (int) y, (int) z).getType() != Material.SOUL_LANTERN) {
                     continue;
                 }
 
@@ -144,8 +151,23 @@ public class Plugin extends JavaPlugin implements Listener {
                             NamespacedKey keyParticle = NamespacedKey.minecraft(particleName.toLowerCase());
                             Sound sound = Registry.SOUNDS.get(keySound);
                             Particle particle = Registry.PARTICLE_TYPE.get(keyParticle);
-                            p.playSound(loc, sound, volume, pitch);
                             loc.getBlock().getWorld().spawnParticle(particle, loc, 10, 0.3, 0.3, 0.3, 0.01);
+                            if (soundName != null && sound != null && soundName.startsWith("music")) {
+                                long cooldownMs = 300_000L;
+                                LocalDateTime now = LocalDateTime.now();
+
+                                if (MUSIC_COOLDOWN.containsKey(p.getName())) {
+                                    LocalDateTime lastPlayed = MUSIC_COOLDOWN.get(p.getName());
+                                    if (Duration.between(lastPlayed, now).toMillis() < cooldownMs) {
+                                        continue;
+                                    }
+                                }
+
+                                p.playSound(loc, sound, volume, pitch);
+                                MUSIC_COOLDOWN.put(p.getName(), now);
+                            } else {
+                                p.playSound(loc, sound, volume, pitch);
+                            }
                         } catch (IllegalArgumentException ex) {
                             this.getLogger().warning("Son invalide pour la pierre " + stoneKey + ": " + soundName);
                         } catch (Exception ex) {
