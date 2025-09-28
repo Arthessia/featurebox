@@ -87,7 +87,6 @@ public class Plugin extends JavaPlugin implements Listener {
         PluginFoodRecipe pluginFoodRecipe = new PluginFoodRecipe(this);
         PluginItemRecipe pluginItemRecipe = new PluginItemRecipe(this);
         OnSpawn onSpawn = new OnSpawn(this);
-        TeleportStone stones = new TeleportStone(this);
         Bukkit.getServer().getPluginManager().registerEvents(onDeath, this);
         Bukkit.getServer().getPluginManager().registerEvents(riptide, this);
         Bukkit.getServer().getPluginManager().registerEvents(unused, this);
@@ -95,6 +94,7 @@ public class Plugin extends JavaPlugin implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(pluginItemRecipe, this);
         Bukkit.getServer().getPluginManager().registerEvents(onSpawn, this);
         if (getConfig().getBoolean("teleport.enabled", true)) {
+            TeleportStone stones = new TeleportStone(this);
             Bukkit.getServer().getPluginManager().registerEvents(stones, this);
             playTeleportStones();
         }
@@ -103,6 +103,9 @@ public class Plugin extends JavaPlugin implements Listener {
 
     private void playTeleportStones() {
         Bukkit.getScheduler().runTaskTimer(this, () -> {
+            if (this.getConfig().getBoolean("teleport.enabled", true) == false) {
+                return;
+            }
             String basePath = "teleport.";
             for (String stoneKey : this.getConfig().getConfigurationSection("teleport.stones").getKeys(false)) {
                 String worldName = this.getConfig().getString("teleport.stones." + stoneKey + ".world");

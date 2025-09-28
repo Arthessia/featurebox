@@ -61,6 +61,9 @@ public class TeleportStone implements Listener {
 
     @EventHandler
     public void onBlockPlaceControl(BlockPlaceEvent event) {
+        if (plugin.getConfig().getBoolean("teleport.enabled", true) == false) {
+            return;
+        }
         Block placed = event.getBlockPlaced();
         Player player = event.getPlayer();
 
