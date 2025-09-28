@@ -11,10 +11,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Registry;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -42,6 +48,7 @@ import arthessia.featurebox.objects.CustomMob;
 import arthessia.featurebox.objects.Data;
 import arthessia.featurebox.ondeath.OnDeath;
 import arthessia.featurebox.riptide.Riptide;
+import arthessia.featurebox.stones.TeleportStone;
 import arthessia.featurebox.unused.Unused;
 
 public class Plugin extends JavaPlugin implements Listener {
@@ -80,13 +87,71 @@ public class Plugin extends JavaPlugin implements Listener {
         PluginFoodRecipe pluginFoodRecipe = new PluginFoodRecipe(this);
         PluginItemRecipe pluginItemRecipe = new PluginItemRecipe(this);
         OnSpawn onSpawn = new OnSpawn(this);
+        TeleportStone stones = new TeleportStone(this);
         Bukkit.getServer().getPluginManager().registerEvents(onDeath, this);
         Bukkit.getServer().getPluginManager().registerEvents(riptide, this);
         Bukkit.getServer().getPluginManager().registerEvents(unused, this);
         Bukkit.getServer().getPluginManager().registerEvents(pluginFoodRecipe, this);
         Bukkit.getServer().getPluginManager().registerEvents(pluginItemRecipe, this);
         Bukkit.getServer().getPluginManager().registerEvents(onSpawn, this);
+        if (getConfig().getBoolean("teleport.enabled", true)) {
+            Bukkit.getServer().getPluginManager().registerEvents(stones, this);
+            playTeleportStones();
+        }
         getLogger().info("Features loaded...");
+    }
+
+    private void playTeleportStones() {
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            String basePath = "teleport.";
+            for (String stoneKey : this.getConfig().getConfigurationSection("teleport.stones").getKeys(false)) {
+                String worldName = this.getConfig().getString("teleport.stones." + stoneKey + ".world");
+                World world = Bukkit.getWorld(worldName);
+                if (world == null) {
+                    continue;
+                }
+                String soundName = this.getConfig().getString(basePath + "sound.ambient", "AMBIENT_BASALT_DELTAS_MOOD");
+                String particleName = this.getConfig().getString(basePath + "particle", "end_rod");
+                float volume = (float) this.getConfig().getDouble(basePath + "sound.volume", 1.0);
+                float pitch = (float) this.getConfig().getDouble(basePath + "sound.pitch", 1.0);
+
+                double x = this.getConfig().getDouble("teleport.stones." + stoneKey + ".x");
+                double y = this.getConfig().getDouble("teleport.stones." + stoneKey + ".y");
+                double z = this.getConfig().getDouble("teleport.stones." + stoneKey + ".z");
+
+                if (world.getBlockAt((int) x, (int) y, (int) z).getType() != Material.LIGHTNING_ROD) {
+                    continue;
+                }
+
+                String perStonePath = basePath + "stones." + stoneKey + ".sound.";
+                if (this.getConfig().isConfigurationSection(perStonePath)) {
+                    soundName = this.getConfig().getString(perStonePath + "ambient", soundName);
+                    particleName = this.getConfig().getString(basePath + "stones." + stoneKey + ".particle",
+                            particleName);
+                    volume = (float) this.getConfig().getDouble(perStonePath + "volume", volume);
+                    pitch = (float) this.getConfig().getDouble(perStonePath + "pitch", pitch);
+                }
+
+                Location loc = new Location(world, x + 0.5, y + 1, z + 0.5);
+
+                for (Player p : world.getPlayers()) {
+                    if (p.getLocation().distanceSquared(loc) <= 16 * 16) { // 16 blocs de rayon
+                        try {
+                            NamespacedKey keySound = NamespacedKey.minecraft(soundName.toLowerCase());
+                            NamespacedKey keyParticle = NamespacedKey.minecraft(particleName.toLowerCase());
+                            Sound sound = Registry.SOUNDS.get(keySound);
+                            Particle particle = Registry.PARTICLE_TYPE.get(keyParticle);
+                            p.playSound(loc, sound, volume, pitch);
+                            loc.getBlock().getWorld().spawnParticle(particle, loc, 10, 0.3, 0.3, 0.3, 0.01);
+                        } catch (IllegalArgumentException ex) {
+                            this.getLogger().warning("Son invalide pour la pierre " + stoneKey + ": " + soundName);
+                        } catch (Exception ex) {
+                            this.getLogger().warning("Son inexistant pour la pierre " + stoneKey + ": " + soundName);
+                        }
+                    }
+                }
+            }
+        }, 0L, this.getConfig().getLong("teleport.sound.delay", 10) * 20L);
     }
 
     private ShapedRecipe createEnderWandRecipe() {

@@ -20,26 +20,26 @@ riptide:
 mobs:
   enabled: true       # Enable/disable custom mob spawning
   list:
-    - name: Arthessia # Custom mob name (displayed in-game)
-      replaceEntity: minecraft:skeleton # Entity type to replace
-      stuff:           # Equipment for the custom mob
-        - material: LEATHER_BOOTS
-          enchants:
-            - name: minecraft:protection
-              level: 1
-        - material: BOW
-          enchants:
-            - name: minecraft:flame
-              level: 1
-      spawnChance: 25 # Chance (%) for this mob to spawn instead of the vanilla entity
+    # - name: Arthessia # Custom mob name (displayed in-game)
+    #   replaceEntity: minecraft:skeleton # Entity type to replace
+    #   stuff:           # Equipment for the custom mob
+    #     - material: LEATHER_BOOTS
+    #       enchants:
+    #         - name: minecraft:protection
+    #           level: 1
+    #     - material: BOW
+    #       enchants:
+    #         - name: minecraft:flame
+    #           level: 1
+    #   spawnChance: 25 # Chance (%) for this mob to spawn instead of the vanilla entity
 
-    - name: Matthieu
-      replaceEntity: minecraft:skeleton
-      stuff:
-        - material: DIAMOND_LEGGINGS
-        - material: GOLDEN_CHESTPLATE
-        - material: GOLDEN_AXE
-      spawnChance: 25
+    # - name: Matthieu
+    #   replaceEntity: minecraft:skeleton
+    #   stuff:
+    #     - material: DIAMOND_LEGGINGS
+    #     - material: GOLDEN_CHESTPLATE
+    #     - material: GOLDEN_AXE
+    #   spawnChance: 25
 
 # --- Custom Recipes ------------------------------------------
 # Section for custom crafting recipes and their effects.
@@ -123,3 +123,37 @@ common:
     death:
       inventory:
         enabled: true           # Enable/disable totem saving effect from inventory/bundle
+
+# --- Teleport Stones -----------------------------------------
+# Section for configuring teleport stones (lightning rods) and their behavior.
+teleport:
+  enabled: true         # Global toggle: enable/disable the teleport system
+  distance: 200         # Minimum distance (in blocks) required between two teleport stones
+  lightning: false      # Global setting: should lightning effects be used on teleport (can be overridden per stone)
+
+  sound:
+    teleport: block.end_portal.spawn    # Default sound played when teleporting
+    ambient: ambient.basalt_deltas.mood # Default ambient sound around teleport stones
+    volume: 1.0                         # Default sound volume
+    pitch: 1.0                          # Default sound pitch
+    delay: 10                           # Delay in seconds between ambient effects
+
+  particle: end_rod    # Default particle effect around teleport stones
+
+  stones:
+    # SPAWN:                                # Unique identifier for the stone
+    #   name: §aSpawn Stone                 # Display name (can use color codes §)
+    #   world: world                        # World name where the stone is placed
+    #   material: STONE                     # Item used as the clickable icon in the teleport menu
+    #   x: 0                                # Block X coordinate of the lightning rod
+    #   y: 65                               # Block Y coordinate of the lightning rod
+    #   z: 0                                # Block Z coordinate of the lightning rod
+
+    #   # Per-stone customization (optional, overrides global defaults):
+    #   lightning: true                     # Should lightning strike effect be shown when teleporting to/from this stone
+    #   particle: portal                    # Custom particle effect for this stone
+    #   sound:
+    #     teleport: entity.enderman.teleport # Custom teleport sound for this stone
+    #     ambient: block.beacon.ambient      # Custom ambient looping sound for this stone
+    #     volume: 1.5                        # Custom sound volume
+    #     pitch: 0.8                         # Custom sound pitch
