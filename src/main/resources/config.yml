@@ -168,6 +168,8 @@ teleport:
   stones:
     # SPAWN:                                # Unique identifier for the stone
     #   name: §aSpawn Stone                 # Display name (can use color codes §)
+    #   players: []                         # List of UUIDs of players who have discovered this stone
+    #   creator: <UUID>                     # UUID of the player who created the stone
     #   world: world                        # World name where the stone is placed
     #   material: STONE                     # Item used as the clickable icon in the teleport menu
     #   x: 0                                # Block X coordinate of the lightning rod

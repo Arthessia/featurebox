@@ -20,6 +20,11 @@ public class TeleportProfileCommands implements CommandExecutor, TabCompleter {
 
     private final Plugin plugin;
 
+    private static final List<String> FORBIDDEN_PARTICLES = Arrays.asList(
+            "block", "block_marker", "falling_dust", "dust_color_transition", "elder_guardian", "item", "dust",
+            "dust_pillar", "block_crumble", "entity_effect", "sculk_charge", "shriek", "tinted_leaves", "trail",
+            "vibration");
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player player))
@@ -47,8 +52,17 @@ public class TeleportProfileCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage("§cInvalid sound: " + soundName);
                     return true;
                 }
+                if (soundName.startsWith("music.")) {
+                    player.sendMessage(
+                            "§cMusic that does not take spatialization into account is prohibited: " + soundName);
+                    return true;
+                }
                 plugin.getConfig().set(basePath + (option.equals("sound_ambient") ? ".ambient" : ".teleport"),
                         soundName);
+
+                updatePlayerStones(player, option.equals("sound_ambient") ? "sound.ambient" : "sound.teleport",
+                        soundName);
+
                 plugin.saveConfig();
                 player.sendMessage("§a" + option.replace('_', ' ') + " set to: " + soundName);
                 break;
@@ -64,7 +78,14 @@ public class TeleportProfileCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage("§cInvalid particle: " + particleName);
                     return true;
                 }
+                if (FORBIDDEN_PARTICLES.contains(particleName)) {
+                    player.sendMessage("§cThis particle type requires extra data and is not allowed: " + particleName);
+                    return true;
+                }
+
                 plugin.getConfig().set(basePath + ".particle", particleName);
+                updatePlayerStones(player, "particle", particleName);
+
                 plugin.saveConfig();
                 player.sendMessage("§aParticle set to: " + particleName);
                 break;
@@ -80,7 +101,10 @@ public class TeleportProfileCommands implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 boolean lightning = Boolean.parseBoolean(boolArg);
+
                 plugin.getConfig().set(basePath + ".lightning", lightning);
+                updatePlayerStones(player, "lightning", lightning);
+
                 plugin.saveConfig();
                 player.sendMessage("§aLightning set to: " + lightning);
                 break;
@@ -91,6 +115,22 @@ public class TeleportProfileCommands implements CommandExecutor, TabCompleter {
         }
 
         return true;
+    }
+
+    private void updatePlayerStones(Player player, String field, Object value) {
+        if (!plugin.getConfig().isConfigurationSection("teleport.stones")) {
+            return;
+        }
+
+        String uuid = player.getUniqueId().toString();
+        for (String stoneKey : plugin.getConfig().getConfigurationSection("teleport.stones").getKeys(false)) {
+            String creator = plugin.getConfig().getString("teleport.stones." + stoneKey + ".creator", "");
+            if (!creator.equals(uuid)) {
+                continue;
+            }
+
+            plugin.getConfig().set("teleport.stones." + stoneKey + "." + field, value);
+        }
     }
 
     @Override
@@ -110,6 +150,7 @@ public class TeleportProfileCommands implements CommandExecutor, TabCompleter {
                             .map(key -> key.getKey())
                             .filter(key -> key != null)
                             .map(NamespacedKey::getKey)
+                            .filter(s -> !s.startsWith("music."))
                             .filter(s -> s.startsWith(args[2].toLowerCase()))
                             .toList();
 
@@ -118,6 +159,7 @@ public class TeleportProfileCommands implements CommandExecutor, TabCompleter {
                             .map(key -> key.getKey())
                             .filter(key -> key != null)
                             .map(NamespacedKey::getKey)
+                            .filter(s -> !FORBIDDEN_PARTICLES.contains(s))
                             .filter(s -> s.startsWith(args[2].toLowerCase()))
                             .toList();
 

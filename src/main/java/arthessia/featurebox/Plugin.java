@@ -21,6 +21,7 @@ import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -113,7 +114,11 @@ public class Plugin extends JavaPlugin implements Listener {
                 return;
             }
             String basePath = "teleport.";
-            for (String stoneKey : this.getConfig().getConfigurationSection("teleport.stones").getKeys(false)) {
+            ConfigurationSection stones = this.getConfig().getConfigurationSection("teleport.stones");
+            if (stones == null) {
+                return;
+            }
+            for (String stoneKey : stones.getKeys(false)) {
                 String worldName = this.getConfig().getString("teleport.stones." + stoneKey + ".world");
                 World world = Bukkit.getWorld(worldName);
                 if (world == null) {
@@ -169,14 +174,16 @@ public class Plugin extends JavaPlugin implements Listener {
                                 p.playSound(loc, sound, volume, pitch);
                             }
                         } catch (IllegalArgumentException ex) {
-                            this.getLogger().warning("Son invalide pour la pierre " + stoneKey + ": " + soundName);
+                            this.getLogger().warning("Sound or particle invalid for the stone " + stoneKey + ": "
+                                    + soundName + " / " + particleName);
                         } catch (Exception ex) {
-                            this.getLogger().warning("Son inexistant pour la pierre " + stoneKey + ": " + soundName);
+                            this.getLogger().warning("Error playing sound or particle for stone " + stoneKey + ": "
+                                    + ex.getMessage());
                         }
                     }
                 }
             }
-        }, 0L, this.getConfig().getLong("teleport.sound.delay", 10) * 20L);
+        }, 0L, this.getConfig().getLong("teleport.sound.delay", 30) * 20L);
     }
 
     private ShapedRecipe createEnderWandRecipe() {

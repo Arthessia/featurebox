@@ -154,6 +154,7 @@ public class TeleportStone implements Listener {
         }
 
         plugin.getConfig().set("teleport.stones." + stoneKey + ".name", stoneName);
+        plugin.getConfig().set("teleport.stones." + stoneKey + ".creator", player.getUniqueId().toString());
         plugin.getConfig().set("teleport.stones." + stoneKey + ".material", below.getType().name());
         plugin.getConfig().set("teleport.stones." + stoneKey + ".world", block.getWorld().getName());
         plugin.getConfig().set("teleport.stones." + stoneKey + ".x", block.getX());
@@ -188,13 +189,17 @@ public class TeleportStone implements Listener {
 
     private boolean areSurroundedByAirOrFence(Block block) {
         return (block.getRelative(1, 0, 0).getType() == Material.AIR
-                || block.getRelative(1, 0, 0).getType().name().toLowerCase().contains("fence"))
+                || block.getRelative(1, 0, 0).getType().name().toLowerCase().contains("fence")
+                || block.getRelative(1, 0, 0).getType().name().toLowerCase().contains("wall"))
                 && (block.getRelative(-1, 0, 0).getType() == Material.AIR
-                        || block.getRelative(-1, 0, 0).getType().name().toLowerCase().contains("fence"))
+                        || block.getRelative(-1, 0, 0).getType().name().toLowerCase().contains("fence")
+                        || block.getRelative(-1, 0, 0).getType().name().toLowerCase().contains("wall"))
                 && (block.getRelative(0, 0, 1).getType() == Material.AIR
-                        || block.getRelative(0, 0, 1).getType().name().toLowerCase().contains("fence"))
+                        || block.getRelative(0, 0, 1).getType().name().toLowerCase().contains("fence")
+                        || block.getRelative(0, 0, 1).getType().name().toLowerCase().contains("wall"))
                 && (block.getRelative(0, 0, -1).getType() == Material.AIR
-                        || block.getRelative(0, 0, -1).getType().name().toLowerCase().contains("fence"));
+                        || block.getRelative(0, 0, -1).getType().name().toLowerCase().contains("fence")
+                        || block.getRelative(0, 0, -1).getType().name().toLowerCase().contains("wall"));
     }
 
     private boolean isNearAnotherTeleport(Location newLoc, int radius) {
@@ -335,8 +340,12 @@ public class TeleportStone implements Listener {
             openMenu(player, currentPage + 1);
             return;
         }
+        ConfigurationSection stones = plugin.getConfig().getConfigurationSection("teleport.stones");
+        if (stones == null) {
+            return;
+        }
 
-        for (String stoneKey : plugin.getConfig().getConfigurationSection("teleport.stones").getKeys(false)) {
+        for (String stoneKey : stones.getKeys(false)) {
             String stoneName = plugin.getConfig().getString("teleport.stones." + stoneKey + ".name", stoneKey);
             if (!stoneName.equalsIgnoreCase(name)) {
                 continue;
@@ -369,7 +378,11 @@ public class TeleportStone implements Listener {
     }
 
     private String getStoneKeyAt(Location loc) {
-        for (String stoneKey : plugin.getConfig().getConfigurationSection("teleport.stones").getKeys(false)) {
+        ConfigurationSection stones = plugin.getConfig().getConfigurationSection("teleport.stones");
+        if (stones == null) {
+            return null;
+        }
+        for (String stoneKey : stones.getKeys(false)) {
             String worldName = plugin.getConfig().getString("teleport.stones." + stoneKey + ".world");
             World world = Bukkit.getWorld(worldName);
             int x = plugin.getConfig().getInt("teleport.stones." + stoneKey + ".x");
