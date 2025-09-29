@@ -19,7 +19,8 @@ riptide:
 
 mobs:
   enabled: true       # Enable/disable custom mob spawning
-  list:
+  list: []            # List of custom mobs (see examples below)
+    # Example custom mob configurations:
     # - name: Arthessia # Custom mob name (displayed in-game)
     #   replaceEntity: minecraft:skeleton # Entity type to replace
     #   stuff:           # Equipment for the custom mob
@@ -55,49 +56,51 @@ mobs:
 # --- Custom Recipes ------------------------------------------
 # Section for custom crafting recipes and their effects.
 
-recipes:
-  fish_soup:
-    icon: MUSHROOM_STEW         # Item icon for the recipe result
-    name: "§7Une soupe délicieuse" # Display name for the crafted item
-    lore:                       # Lore (description) lines for the item
-      - "§7→ Permet de respirer sous l'eau pendant 10 min"
-    shape:                      # Crafting grid shape (3x3, use / for empty slots)
-      - "AAA"
-      - "/V/"
-    ingredients:                # Ingredient mapping for each shortcut letter
-      - shortcut: A
-        key: COD
-      - shortcut: V
-        key: BOWL
-    effects:                    # Effects applied when consuming the item
-      - key: WATER_BREATHING
-        duration: 600           # Duration in seconds
-        amplifier: 0
-    glow: true                  # Whether the item glows (enchanted effect)
+recipes: []          # List of custom recipes (see examples below)
+  # Example custom recipe configurations:
+  # Each recipe must have a unique key (e.g., fish_soup, magic_cookie)
+  # fish_soup:
+  #   icon: MUSHROOM_STEW         # Item icon for the recipe result
+  #   name: "§7Une soupe délicieuse" # Display name for the crafted item
+  #   lore:                       # Lore (description) lines for the item
+  #     - "§7→ Permet de respirer sous l'eau pendant 10 min"
+  #   shape:                      # Crafting grid shape (3x3, use / for empty slots)
+  #     - "AAA"
+  #     - "/V/"
+  #   ingredients:                # Ingredient mapping for each shortcut letter
+  #     - shortcut: A
+  #       key: COD
+  #     - shortcut: V
+  #       key: BOWL
+  #   effects:                    # Effects applied when consuming the item
+  #     - key: WATER_BREATHING
+  #       duration: 600           # Duration in seconds
+  #       amplifier: 0
+  #   glow: true                  # Whether the item glows (enchanted effect)
 
-  magic_cookie:
-    icon: COOKIE
-    name: "§dMagic Cookie"
-    lore:
-      - "§7Un biscuit mystérieux…"
-      - "§7→ Donne de la vitesse et régénère la vie"
-    shape:
-      - "SSS"
-      - "SCS"
-      - "SSS"
-    ingredients:
-      - shortcut: S
-        key: SUGAR
-      - shortcut: C
-        key: COOKIE
-    effects:
-      - key: SPEED
-        duration: 300           # Duration in seconds
-        amplifier: 1
-      - key: REGENERATION
-        duration: 60            # Duration in seconds
-        amplifier: 0
-    glow: true
+  # magic_cookie:
+  #   icon: COOKIE
+  #   name: "§dMagic Cookie"
+  #   lore:
+  #     - "§7Un biscuit mystérieux…"
+  #     - "§7→ Donne de la vitesse et régénère la vie"
+  #   shape:
+  #     - "SSS"
+  #     - "SCS"
+  #     - "SSS"
+  #   ingredients:
+  #     - shortcut: S
+  #       key: SUGAR
+  #     - shortcut: C
+  #       key: COOKIE
+  #   effects:
+  #     - key: SPEED
+  #       duration: 300           # Duration in seconds
+  #       amplifier: 1
+  #     - key: REGENERATION
+  #       duration: 60            # Duration in seconds
+  #       amplifier: 0
+  #   glow: true
 
 # --- Unused / Experimental Entities --------------------------
 # Section for enabling/disabling and configuring unused mobs.
@@ -158,14 +161,18 @@ teleport:
   # If profile exists, its values are copied when the player creates a new stone
   # If not, nothing is copied (stone keeps defaults)
   # -----------------------------
-  profiles:
-    Arthessia:
-      lightning: false                     # Disable lightning flashes
-      ambient: music_disc.chirp            # Custom ambient sound
-      teleport: block.end_portal.spawn     # Custom teleportation sound
-      particle: flame                      # Custom particle effect
+  profiles: []         # List of user profiles (see example below)
+    # Example profile configuration:
+    # Each profile must have a unique key (e.g., PlayerName)
+    # PlayerName:
+    #   lightning: false                     # Disable lightning flashes
+    #   ambient: music_disc.chirp            # Custom ambient sound
+    #   teleport: block.end_portal.spawn     # Custom teleportation sound
+    #   particle: flame                      # Custom particle effect
 
-  stones:
+  stones: []          # List of teleport stones (see example below)
+    # You can let it empty initially; stones will be added as players create them.
+    # Each stone must have a unique key (e.g., SPAWN, HOME, etc.)
     # SPAWN:                                # Unique identifier for the stone
     #   name: §aSpawn Stone                 # Display name (can use color codes §)
     #   players: []                         # List of UUIDs of players who have discovered this stone
