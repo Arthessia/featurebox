@@ -112,6 +112,8 @@ unused:
       chance: 10                # Chance (%) for killer rabbit to spawn
 
   zombiehorse:
+    taming:
+      chance: 33                # Chance (%) to tame a zombie horse when feeding rotten flesh
     spawn:
       enabled: true             # Enable/disable zombie horse spawn
       chance: 15                # Chance (%) for zombie horse to spawn
