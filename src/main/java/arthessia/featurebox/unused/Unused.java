@@ -13,6 +13,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Illusioner;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.entity.ZombieHorse;
 import org.bukkit.entity.Rabbit.Type;
 import org.bukkit.event.EventHandler;
@@ -87,7 +88,7 @@ public class Unused implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+    public void zombieHorseTaming(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof ZombieHorse zombieHorse))
             return;
 
@@ -135,6 +136,61 @@ public class Unused implements Listener {
 
         if (saddle != null && saddle.getType() == Material.SADDLE) {
             zombieHorse.addPassenger(player);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void skeletonHorseTaming(PlayerInteractEntityEvent event) {
+        if (!(event.getRightClicked() instanceof SkeletonHorse skeletonHorse))
+            return;
+
+        Player player = event.getPlayer();
+        ItemStack hand = player.getInventory().getItemInMainHand();
+
+        if (!skeletonHorse.isTamed()) {
+            if (hand.getType() == Material.BONE) {
+                int randomInt = Plugin.RANDOM.nextInt(100);
+                int chance = plugin.getConfig().getInt("unused.zombiehorse.taming.chance", 33);
+
+                if (randomInt <= chance) {
+                    skeletonHorse.setTamed(true);
+                    skeletonHorse.setOwner(player);
+                    skeletonHorse.getWorld().playSound(skeletonHorse.getLocation(), Sound.ENTITY_HORSE_BREATHE, 1f, 1f);
+                    skeletonHorse.getWorld().spawnParticle(Particle.HEART, skeletonHorse.getLocation().add(0, 1, 0), 5);
+                } else {
+                    skeletonHorse.getWorld().playSound(skeletonHorse.getLocation(), Sound.ENTITY_HORSE_EAT, 1f, 1f);
+                }
+
+                hand.setAmount(hand.getAmount() - 1);
+            } else if (hand.getType() == Material.SADDLE) {
+                skeletonHorse.getWorld().playSound(skeletonHorse.getLocation(), Sound.ENTITY_HORSE_ANGRY, 1f, 1f);
+                skeletonHorse.getWorld().spawnParticle(Particle.ANGRY_VILLAGER,
+                        skeletonHorse.getLocation().add(0, 1, 0), 3,
+                        0.2, 0.5, 0.2, 0.01);
+                skeletonHorse.setVelocity(skeletonHorse.getVelocity().add(new Vector(0, 0.2, 0)));
+            } else {
+                skeletonHorse.getWorld().playSound(skeletonHorse.getLocation(), Sound.ENTITY_HORSE_ANGRY, 1f, 1f);
+                skeletonHorse.getWorld().spawnParticle(Particle.ANGRY_VILLAGER,
+                        skeletonHorse.getLocation().add(0, 1, 0), 3,
+                        0.2, 0.5, 0.2, 0.01);
+                skeletonHorse.setVelocity(skeletonHorse.getVelocity().add(new Vector(0, 0.2, 0)));
+            }
+
+            event.setCancelled(true);
+            return;
+        }
+
+        ItemStack saddle = skeletonHorse.getInventory().getItem(0); // slot 0 = selle
+        if ((saddle == null || saddle.getType() != Material.SADDLE) && hand.getType() == Material.SADDLE) {
+            skeletonHorse.getInventory().setItem(0, new ItemStack(Material.SADDLE));
+            hand.setAmount(hand.getAmount() - 1);
+            event.setCancelled(true);
+            return;
+        }
+
+        if (saddle != null && saddle.getType() == Material.SADDLE) {
+            skeletonHorse.addPassenger(player);
             event.setCancelled(true);
         }
     }
