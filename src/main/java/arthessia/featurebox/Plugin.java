@@ -141,11 +141,9 @@ public class Plugin extends JavaPlugin implements Listener {
                 String perStonePath = basePath + "stones." + stoneKey + ".sound.";
                 if (this.getConfig().isConfigurationSection(perStonePath)) {
                     soundName = this.getConfig().getString(perStonePath + "ambient", soundName);
-                    particleName = this.getConfig().getString(basePath + "stones." + stoneKey + ".particle",
-                            particleName);
-                    volume = (float) this.getConfig().getDouble(perStonePath + "volume", volume);
-                    pitch = (float) this.getConfig().getDouble(perStonePath + "pitch", pitch);
                 }
+                particleName = this.getConfig().getString(basePath + "stones." + stoneKey + ".particle",
+                        particleName);
 
                 Location loc = new Location(world, x + 0.5, y + 1, z + 0.5);
 
