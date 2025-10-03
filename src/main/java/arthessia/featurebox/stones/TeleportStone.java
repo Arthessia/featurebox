@@ -1,8 +1,10 @@
 package arthessia.featurebox.stones;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,6 +18,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +28,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -38,7 +42,7 @@ public class TeleportStone implements Listener {
     private static final int SIZE = 54;
     private static final int ITEMS_PER_PAGE = 45;
 
-    private final Map<String, Integer> openMenus = new HashMap<>();
+    private final Map<String, Integer> openMenus = new TreeMap<>();
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
@@ -249,16 +253,25 @@ public class TeleportStone implements Listener {
     }
 
     private void openMenu(Player player, int page) {
-        List<String> stones = plugin.getConfig().getBoolean("teleport.discovery",
-                true) ? plugin.getConfig().getConfigurationSection("teleport.stones").getKeys(false).stream()
-                        .filter(stoneKey -> {
-                            List<String> players = plugin.getConfig()
-                                    .getStringList("teleport.stones." + stoneKey + ".players");
-                            return players.contains(player.getUniqueId().toString());
-                        })
-                        .toList()
-                        : plugin.getConfig().getConfigurationSection("teleport.stones").getKeys(false).stream()
-                                .toList();
+        ConfigurationSection stonesSection = plugin.getConfig().getConfigurationSection("teleport.stones");
+        List<String> stones = new ArrayList<>();
+
+        if (stonesSection != null) {
+            if (plugin.getConfig().getBoolean("teleport.discovery", true)) {
+                for (String k : stonesSection.getKeys(false)) {
+                    List<String> players = plugin.getConfig().getStringList("teleport.stones." + k + ".players");
+                    if (players.contains(player.getUniqueId().toString())) {
+                        stones.add(k);
+                    }
+                }
+            } else {
+                stones.addAll(stonesSection.getKeys(false));
+            }
+        }
+
+        stones.sort(Comparator.comparing(
+                s -> plugin.getConfig().getString("teleport.stones." + s + ".name", s),
+                String.CASE_INSENSITIVE_ORDER));
 
         int maxPage = (int) Math.ceil((double) stones.size() / ITEMS_PER_PAGE);
         if (page < 0)
@@ -271,8 +284,11 @@ public class TeleportStone implements Listener {
         int start = page * ITEMS_PER_PAGE;
         int end = Math.min(start + ITEMS_PER_PAGE, stones.size());
 
+        String lastCreator = null;
         for (int i = start; i < end; i++) {
             String stoneKey = stones.get(i);
+            String creator = plugin.getConfig().getString("teleport.stones." + stoneKey + ".creator", "unknown");
+
             String name = plugin.getConfig().getString("teleport.stones." + stoneKey + ".name", stoneKey);
             String materialName = plugin.getConfig().getString("teleport.stones." + stoneKey + ".material",
                     "ENDER_PEARL");
@@ -285,6 +301,12 @@ public class TeleportStone implements Listener {
 
             ItemStack icon = new ItemStack(mat);
             ItemMeta meta = icon.getItemMeta();
+            if (!creator.equalsIgnoreCase(lastCreator)) {
+                meta.addEnchant(Enchantment.DENSITY, 1, true);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                lastCreator = creator;
+            }
+
             meta.setDisplayName(name);
             icon.setItemMeta(meta);
 
