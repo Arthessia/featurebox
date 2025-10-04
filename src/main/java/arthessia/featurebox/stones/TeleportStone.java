@@ -273,7 +273,29 @@ public class TeleportStone implements Listener {
                 s -> plugin.getConfig().getString("teleport.stones." + s + ".name", s),
                 String.CASE_INSENSITIVE_ORDER));
 
-        int maxPage = (int) Math.ceil((double) stones.size() / ITEMS_PER_PAGE);
+        List<String> withSeparators = new ArrayList<>();
+        String lastOwner = null;
+        int countInRow = 0;
+
+        for (String key : stones) {
+            String owner = plugin.getConfig().getString("teleport.stones." + key + ".creator", "");
+            if (lastOwner != null && !lastOwner.equals(owner)) {
+                while (countInRow % 9 != 0) {
+                    withSeparators.add("__SEPARATOR__");
+                    countInRow++;
+                }
+            }
+            withSeparators.add(key);
+            countInRow++;
+            lastOwner = owner;
+        }
+
+        while (countInRow % 9 != 0) {
+            withSeparators.add("__SEPARATOR__");
+            countInRow++;
+        }
+
+        int maxPage = (int) Math.ceil((double) withSeparators.size() / ITEMS_PER_PAGE);
         if (page < 0)
             page = 0;
         if (page >= maxPage)
@@ -282,35 +304,44 @@ public class TeleportStone implements Listener {
         Inventory inv = Bukkit.createInventory(null, SIZE, "§5Fast Travel (Page " + (page + 1) + ")");
 
         int start = page * ITEMS_PER_PAGE;
-        int end = Math.min(start + ITEMS_PER_PAGE, stones.size());
+        int end = Math.min(start + ITEMS_PER_PAGE, withSeparators.size());
 
         String lastCreator = null;
         for (int i = start; i < end; i++) {
-            String stoneKey = stones.get(i);
-            String creator = plugin.getConfig().getString("teleport.stones." + stoneKey + ".creator", "unknown");
+            int slot = i - start;
+            String stoneKey = withSeparators.get(i);
+            ItemStack icon;
 
-            String name = plugin.getConfig().getString("teleport.stones." + stoneKey + ".name", stoneKey);
-            String materialName = plugin.getConfig().getString("teleport.stones." + stoneKey + ".material",
-                    "ENDER_PEARL");
-            Material mat;
-            try {
-                mat = Material.valueOf(materialName.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                mat = Material.ENDER_PEARL;
+            if (stoneKey.equals("__SEPARATOR__")) {
+                icon = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+                ItemMeta meta = icon.getItemMeta();
+                meta.setDisplayName(" ");
+                icon.setItemMeta(meta);
+            } else {
+                String creator = plugin.getConfig().getString("teleport.stones." + stoneKey + ".creator", "unknown");
+                String name = plugin.getConfig().getString("teleport.stones." + stoneKey + ".name", stoneKey);
+                String materialName = plugin.getConfig().getString("teleport.stones." + stoneKey + ".material",
+                        "ENDER_PEARL");
+                Material mat;
+                try {
+                    mat = Material.valueOf(materialName.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    mat = Material.ENDER_PEARL;
+                }
+
+                icon = new ItemStack(mat);
+                ItemMeta meta = icon.getItemMeta();
+                if (!creator.equalsIgnoreCase(lastCreator)) {
+                    meta.addEnchant(Enchantment.DENSITY, 1, true);
+                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    lastCreator = creator;
+                }
+
+                meta.setDisplayName(name);
+                icon.setItemMeta(meta);
             }
 
-            ItemStack icon = new ItemStack(mat);
-            ItemMeta meta = icon.getItemMeta();
-            if (!creator.equalsIgnoreCase(lastCreator)) {
-                meta.addEnchant(Enchantment.DENSITY, 1, true);
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                lastCreator = creator;
-            }
-
-            meta.setDisplayName(name);
-            icon.setItemMeta(meta);
-
-            inv.addItem(icon);
+            inv.setItem(slot, icon);
         }
 
         if (page > 0) {
