@@ -106,17 +106,27 @@ recipes: []          # List of custom recipes (see examples below)
 # Section for enabling/disabling and configuring unused mobs.
 
 unused:
+  dinnerbone:
+    chance: 1                   # Chance to trigger Dinnerbone easter egg
+  johnny:
+    chance: 5                   # Chance to trigger Johnny easter egg
+    max: 3                      # Max Johnnys per chunk
+  jeb:
+    chance: 1                   # Chance to trigger jeb easter egg
+    max: 1                      # Max jeb per chunk
   rabbit:
     spawn:
       enabled: true             # Enable/disable killer rabbit spawn
-      chance: 10                # Chance (%) for killer rabbit to spawn
-
+      chance: 5                 # Chance (%) for killer rabbit to spawn
+    toast:
+      chance: 3                 # Chance to trigger Toast easter egg
+      max: 3                    # Max jeb per chunk
   zombiehorse:
     taming:
-      chance: 33                # Chance (%) to tame a zombie horse when feeding rotten flesh
+      chance: 15                # Chance (%) to tame a zombie horse when feeding rotten flesh
     spawn:
       enabled: true             # Enable/disable zombie horse spawn
-      chance: 15                # Chance (%) for zombie horse to spawn
+      chance: 5                 # Chance (%) for zombie horse to spawn
       limit: 3                  # Maximum number of zombie horses per chunk (-1 for unlimited)
 
   illusioner:

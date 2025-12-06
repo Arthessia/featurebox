@@ -8,12 +8,16 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Illusioner;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Sheep;
 import org.bukkit.entity.SkeletonHorse;
+import org.bukkit.entity.Vindicator;
 import org.bukkit.entity.ZombieHorse;
 import org.bukkit.entity.Rabbit.Type;
 import org.bukkit.event.EventHandler;
@@ -35,6 +39,14 @@ public class Unused implements Listener {
     @EventHandler
     public void updateChunckEntities(ChunkLoadEvent event) {
 
+        List<Entity> entities = Arrays.asList(event.getChunk().getEntities());
+
+        // Sheep jeb_
+        spawnEasterEgg(entities, Sheep.class, "unused.jeb.max", "unused.jeb.chance", "jeb_");
+
+        // Johnny
+        spawnEasterEgg(entities, Vindicator.class, "unused.johnny.max", "unused.johnny.chance", "Johnny");
+
         // bunnies
         if (plugin.getConfig().getBoolean("unused.rabbit.spawn.enabled")) {
             List<Rabbit> rabbits = Arrays.asList(event.getChunk().getEntities()).stream()
@@ -44,6 +56,8 @@ public class Unused implements Listener {
             for (Rabbit rabbit : rabbits) {
                 if (Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.rabbit.spawn.chance")) {
                     rabbit.setRabbitType(Type.THE_KILLER_BUNNY);
+                } else if (Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.rabbit.toast.chance")) {
+                    rabbit.setCustomName("Toast");
                 }
             }
         }
@@ -62,7 +76,8 @@ public class Unused implements Listener {
             for (Horse horse : horses) {
                 if ((plugin.getConfig().getInt("unused.zombiehorse.spawn.limit") == -1
                         || zombiehorses.size() < plugin.getConfig().getInt("unused.zombiehorse.spawn.limit"))
-                        && Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.zombiehorse.spawn.chance")) {
+                        && Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.zombiehorse.spawn.chance")
+                        && !horse.isTamed()) {
                     // Convertir le cheval en cheval zombie
                     ZombieHorse zombieHorse = (ZombieHorse) horse.getWorld().spawnEntity(horse.getLocation(),
                             org.bukkit.entity.EntityType.ZOMBIE_HORSE);
@@ -82,6 +97,31 @@ public class Unused implements Listener {
 
                     // Optionnel : Copier d'autres attributs selon les besoins
                     zombieHorse.setJumpStrength(((Horse) horse).getJumpStrength());
+                }
+            }
+        }
+    }
+
+    private void spawnEasterEgg(List<Entity> entities, Class<? extends Entity> entityType, String propertyMax,
+            String propertyChance, String customName) {
+
+        List<Entity> entitiesFilter = entities.stream()
+                .filter(entityType::isInstance)
+                .toList();
+
+        long countJeb = entitiesFilter.stream()
+                .filter(e -> e.getCustomName() != null && e.getCustomName().equals(customName))
+                .count();
+
+        int max = plugin.getConfig().getInt(propertyMax);
+        int chance = plugin.getConfig().getInt(propertyChance);
+
+        if (countJeb < max) {
+            for (Entity entity : entitiesFilter) {
+                if (Plugin.RANDOM.nextInt(100) < chance) {
+                    entity.setCustomName(customName);
+                    entity.setCustomNameVisible(false);
+                    break;
                 }
             }
         }
@@ -197,6 +237,20 @@ public class Unused implements Listener {
 
     @EventHandler
     public void updateCreatureSpawn(CreatureSpawnEvent event) {
+
+        // Dinnerbone
+        if (event.getEntity() instanceof LivingEntity
+                && Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.dinnerbone.chance")) {
+            event.getEntity().setCustomName("Dinnerbone");
+        }
+
+        // Johnny
+        if (event.getEntityType() == EntityType.VINDICATOR
+                && Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.johnny.chance")) {
+            event.getEntity().setCustomName("Johnny");
+        }
+
+        // illusioner
         if (plugin.getConfig().getBoolean("unused.illusioner.spawn.enabled")) {
             if (event.getEntityType() == EntityType.PILLAGER) {
                 if (Plugin.RANDOM.nextInt(100) <= plugin.getConfig().getInt("unused.illusioner.spawn.chance")) {
