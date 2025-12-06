@@ -11,13 +11,13 @@
 
   <packaging>jar</packaging>
   <properties>
-    <featurebox.version>1.0.0.10</featurebox.version>
+    <featurebox.version>1.0.0.11</featurebox.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>22</maven.compiler.source>
     <maven.compiler.target>22</maven.compiler.target>
     <lombok.version>1.18.38</lombok.version>
-    <spigot.version>1.21.8-R0.1-SNAPSHOT</spigot.version>
+    <spigot.version>1.21.10-R0.1-SNAPSHOT</spigot.version>
   </properties>
   <repositories>
     <repository>
