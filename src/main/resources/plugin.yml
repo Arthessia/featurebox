@@ -2,7 +2,7 @@ main: arthessia.featurebox.Plugin
 name: featurebox
 authors: [Arthessia]
 version: 1.0.0.8
-api: "1.21.10"
+api-version: "1.21.10"
 
 commands:
     featurebox:
